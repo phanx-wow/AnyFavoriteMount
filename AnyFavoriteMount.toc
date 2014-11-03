@@ -1,0 +1,12 @@
+## Interface: 60000
+## Version: 6.0.3.wowi:revision
+
+## Title: Any Favorite Mount
+## Notes: Set any mount as a favorite, even if the default UI doesn't let you.
+## Notes-deDE: Legt jedes Reitteir als Favorit fest, auch wenn dem Standard-UI nicht möglich ist.
+## Notes-esES: Establece cualquier montura como un favorito, incluso si la IU predeterminada no lo permite.
+## Notes-esMX: Establece cualquier montura como un favorito, incluso si la IU predeterminada no lo permite.
+
+## SavedVariablesPerCharacter: AFM_Favorites
+
+Addon.lua
