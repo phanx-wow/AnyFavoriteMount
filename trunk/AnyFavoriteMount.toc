@@ -13,7 +13,7 @@
 ## X-License: See the accompanying LICENSE file for information.
 ## X-CompatibleLocales: deDE, enUS, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW
 ## X-Curse-Project-ID: anyfavoritemount
-## X-WoWI-ID:
+## X-WoWI-ID: 23261
 
 ## SavedVariablesPerCharacter: AFM_Favorites
 

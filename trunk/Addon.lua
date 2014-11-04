@@ -1,4 +1,11 @@
--- Allow setting class mounts as favorites
+--[[--------------------------------------------------------------------
+	Any Favorite Mount
+	Lets you set any mount as a favorite, even if the default UI doesn't approve.
+	Copyright (c) 2014 Phanx. All rights reserved.
+	See the accompanying README and LICENSE files for more information.
+	http://www.wowinterface.com/downloads/info23261-AnyFavoriteMount.html
+	http://www.curse.com/addons/wow/anyfavoritemount
+----------------------------------------------------------------------]]
 
 AFM_Favorites = {}
 

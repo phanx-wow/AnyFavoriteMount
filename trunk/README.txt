@@ -12,7 +12,7 @@ it as a favorite. These "special" favorites are stored per character.
 Available on [Curse] [1] and [WoWInterface] [2].
 
  [1]: http://www.curse.com/addons/wow/anyfavoritemount
- [2]: http://www.wowinterface.com/downloads/info-AnyFavoriteMount.html
+ [2]: http://www.wowinterface.com/downloads/info23261-AnyFavoriteMount.html
 
 
 Feedback
