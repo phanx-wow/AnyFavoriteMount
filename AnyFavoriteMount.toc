@@ -3,7 +3,7 @@
 
 ## Title: Any Favorite Mount
 ## Notes: Lets you set any mount as a favorite, even if the default UI doesn't let you.
-## Notes-deDE: Ermöglicht, dass man jedes Reitteir als Favorit festlegen kann, auch wenn das Standard-UI nicht ermöglicht.
+## Notes-deDE: Ermöglicht, dass man jedes Reittier als Favorit festlegen kann, auch wenn das Standard-UI nicht ermöglicht.
 ## Notes-esES: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no lo permite.
 ## Notes-esMX: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no lo permite.
 
