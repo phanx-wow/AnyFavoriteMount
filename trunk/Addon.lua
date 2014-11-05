@@ -22,7 +22,7 @@ local Summon        = C_MountJournal.Summon        -- replaced
 function C_MountJournal.GetIsFavorite(index)
 	local isFavorite, canFavorite = GetIsFavorite(index)
 	if not canFavorite then
-		print("GetIsFavorite", (GetMountInfo(index)), index, isFake[index])
+		--print("GetIsFavorite", (GetMountInfo(index)), index, isFake[index])
 		return not not isFake[index], true
 	end
 	return isFavorite, true
