@@ -1,8 +1,7 @@
 --[[--------------------------------------------------------------------
 	Any Favorite Mount
 	Lets you set any mount as a favorite, even if the default UI doesn't approve.
-	Copyright (c) 2014 Phanx. All rights reserved.
-	See the accompanying README and LICENSE files for more information.
+	Copyright (c) 2014 Phanx <addons@phanx.net>. All rights reserved.
 	http://www.wowinterface.com/downloads/info23261-AnyFavoriteMount.html
 	http://www.curse.com/addons/wow/anyfavoritemount
 ----------------------------------------------------------------------]]
@@ -56,18 +55,83 @@ end
 
 ------------------------------------------------------------------------
 
+local mountTypeInfo = {
+	[230] = {100,0,0},  -- * ground
+	[231] = {0,0,300},  -- Riding Turtle / Sea Turtle
+	[232] = {0,0,450},  -- Abyssal Seahorse, usable only in Vashj'ir
+	[241] = {101,0,0},  -- Qiraji Battle Tanks, usable only in AQ40
+	[247] = {99,310,0}, -- Red Flying Cloud
+	[248] = {99,310,0}, -- * flying
+	[254] = {0,0,300},  -- Subdued Seahorse
+	[269] = {100,0,0},  -- Azure/Crimson Water Strider
+}
+
+local flexMounts = { -- flying mounts that look OK on the ground
+	[75614]  = true, -- Celestial Steed
+	[136505] = true, -- Ghastly Charger
+	[163025] = true, -- Grinning Reaver
+	[142073] = true, -- Hearthsteed
+	[48025]  = true, -- Headless Horseman's Mount
+	[124659] = true, -- Imperial Quilen
+	[72286]  = true, -- Invincible
+	[121837] = true, -- Jade Panther
+	[120043] = true, -- Jeweled Onyx Panther
+	[121820] = true, -- Obsidian Panther
+	[121838] = true, -- Ruby Panther
+	[121836] = true, -- Sapphire Panther
+	[134359] = true, -- Sky Golemn
+	[121839] = true, -- Sunstone Panther
+	[134573] = true, -- Swift Windsteed
+	[107203] = true, -- Tyrael's Charger
+	[163024] = true, -- Warforged Nightmare
+}
+
+local flyingSpell = {
+	[0]   = 90267,  -- Flight Master's License / Eastern Kingdoms
+	[1]   = 90267,  -- Flight Master's License / Kalimdor
+	[646] = 90267,  -- Flight Master's License / Deepholm
+	[571] = 54197,  -- Cold Weather Flying / Northrend
+	[870] = 115913, -- Wisdom of the Four Winds / Pandaria
+}
+
+local function CanFly() -- because IsFlyableArea is a fucking liar
+	if IsFlyableArea() and (IsSpellKnown(34090) or IsSpellKnown(34091) or IsSpellKnown(90265)) then
+		local _, _, _, _, _, _, _, instanceMapID = GetInstanceInfo()
+		local reqSpell = flyingSpell[instanceMapID]
+		if not reqSpell or IsSpellKnown(reqSpell) then
+			return true
+		end
+	end
+end
+
 local randoms = {}
 
 function C_MountJournal.Summon(index)
-	if index == 0 and not IsMounted() and next(isFake) then
-		wipe(randoms)
-		for index = 1, GetNumMounts() do
-			local _, _, _, _, isUsable, _, isFavorite = C_MountJournal.GetMountInfo(index)
+	if index == 0 and not IsMounted() then
+		local bestSpeed = 0
+		local targetType = IsSubmerged() and 3 or CanFly() and 2 or 1
+		--print("Looking for:", IsSubmerged() and "SWIMMING" or CanFly() and "FLYING" or "GROUND")
+		for i = 1, GetNumMounts() do
+			local name, spellID, _, _, isUsable, _, isFavorite = C_MountJournal.GetMountInfo(i)
 			if isUsable and isFavorite then
-				tinsert(randoms, index)
+				local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtra(i)
+				local speed = mountTypeInfo[mountType][targetType]
+				if speed == 99 and flexMounts[spellID] then
+					speed = 100
+				end
+				--print("Checking:", name, "@", speed, "VS", bestSpeed)
+				if speed > bestSpeed then
+					bestSpeed = speed
+					wipe(randoms)
+					tinsert(randoms, i)
+				elseif speed == bestSpeed then
+					tinsert(randoms, i)
+				end
 			end
 		end
-		index = randoms[random(#randoms)]
+		if bestSpeed > 0 then
+			index = randoms[random(#randoms)]
+		end
 	end
 	Summon(index)
 end

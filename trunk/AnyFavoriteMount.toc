@@ -2,15 +2,15 @@
 ## Version: 6.0.3.wowi:revision
 
 ## Title: Any Favorite Mount
-## Notes: Lets you set any mount as a favorite, even if the default UI doesn't let you.
-## Notes-deDE: Ermöglicht, dass man jedes Reittier als Favorit festlegen kann, auch wenn das Standard-UI nicht ermöglicht.
-## Notes-esES: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no lo permite.
-## Notes-esMX: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no lo permite.
+## Notes: Lets you set any mount as a favorite, even if the default UI does not.
+## Notes-deDE: Ermöglicht, dass man jedes Reitteir als Favorit festlegen kann, auch wenn das Standard-UI nicht.
+## Notes-esES: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no.
+## Notes-esMX: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no.
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
-## X-Copyright: Copyright (c) 2014 Phanx. All rights reserved.
-## X-License: See the accompanying LICENSE file for information.
+## X-Copyright: Copyright (c) 2014 Phanx.
+## X-License: All rights reserved.
 ## X-CompatibleLocales: deDE, enUS, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW
 ## X-Curse-Project-ID: anyfavoritemount
 ## X-WoWI-ID: 23261
