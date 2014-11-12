@@ -10,7 +10,6 @@
 ## Author: Phanx
 ## X-Email: addons@phanx.net
 ## X-Copyright: Copyright (c) 2014 Phanx. All rights reserved.
-## X-CompatibleLocales: deDE, enUS, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW
 ## X-Website: https://github.com/Phanx/AnyFavoriteMount
 
 ## SavedVariablesPerCharacter: AFM_Favorites
