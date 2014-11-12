@@ -1,5 +1,5 @@
 ## Interface: 60000
-## Version: 6.0.3.wowi:revision
+## Version: 6.0.3.6
 
 ## Title: Any Favorite Mount
 ## Notes: Lets you set any mount as a favorite, even if the default UI does not.
@@ -12,8 +12,6 @@
 ## X-Copyright: Copyright (c) 2014 Phanx.
 ## X-License: All rights reserved.
 ## X-CompatibleLocales: deDE, enUS, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW
-## X-Curse-Project-ID: anyfavoritemount
-## X-WoWI-ID: 23261
 
 ## SavedVariablesPerCharacter: AFM_Favorites
 
