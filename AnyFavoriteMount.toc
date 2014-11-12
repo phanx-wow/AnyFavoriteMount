@@ -2,16 +2,16 @@
 ## Version: 6.0.3.6
 
 ## Title: Any Favorite Mount
-## Notes: Lets you set any mount as a favorite, even if the default UI does not.
-## Notes-deDE: Ermöglicht, dass man jedes Reitteir als Favorit festlegen kann, auch wenn das Standard-UI nicht.
-## Notes-esES: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no.
-## Notes-esMX: Te permite establecer cualquier montura como un favorito, incluso si la IU predeterminada no.
+## Notes: Set any mount as a favorite, even if the default UI doesn't approve.
+## Notes-deDE: Legt irgendeines Reitteir als Favorit fest, auch wenn das Standard-UI nicht erlaubt.
+## Notes-esES: Establecer cualquier montura como favorito, incluso si la IU estandár no aprueba.
+## Notes-esMX: Establecer cualquier montura como favorito, incluso si la IU estandár no aprueba.
 
 ## Author: Phanx
 ## X-Email: addons@phanx.net
-## X-Copyright: Copyright (c) 2014 Phanx.
-## X-License: All rights reserved.
+## X-Copyright: Copyright (c) 2014 Phanx. All rights reserved.
 ## X-CompatibleLocales: deDE, enUS, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW
+## X-Website: https://github.com/Phanx/AnyFavoriteMount
 
 ## SavedVariablesPerCharacter: AFM_Favorites
 
