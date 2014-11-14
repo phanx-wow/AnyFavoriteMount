@@ -1,5 +1,5 @@
 ## Interface: 60000
-## Version: 6.0.3.6
+## Version: 6.0.3.7
 
 ## Title: Any Favorite Mount
 ## Notes: Set any mount as a favorite, even if the default UI doesn't approve.

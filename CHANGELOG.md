@@ -1,3 +1,7 @@
+### Version 6.0.3.7
+
+* No, Blizzard, Draenor is not flyable either.
+
 ### Version 6.0.3.6
 
 * Fully replaced the default summoning logic to make sure ground mounts are never summoned in flying areas.
