@@ -88,19 +88,23 @@ local flexMounts = { -- flying mounts that look OK on the ground
 }
 
 local flyingSpell = {
-	[0]   = 90267,  -- Flight Master's License / Eastern Kingdoms
-	[1]   = 90267,  -- Flight Master's License / Kalimdor
-	[646] = 90267,  -- Flight Master's License / Deepholm
-	[571] = 54197,  -- Cold Weather Flying / Northrend
-	[870] = 115913, -- Wisdom of the Four Winds / Pandaria
+	[0]   = 90267,  -- Eastern Kingdoms = Flight Master's License
+	[1]   = 90267,  -- Kalimdor = Flight Master's License
+	[646] = 90267,  -- Deepholm = Flight Master's License
+	[571] = 54197,  -- Northrend = Cold Weather Flying
+	[870] = 115913, -- Pandaria = Wisdom of the Four Winds
+	[1116] = -1, -- Draenor
+	[1265] = -1, -- Tanaan Jungle Intro
 }
 
 local function CanFly() -- because IsFlyableArea is a fucking liar
-	if IsFlyableArea() and (IsSpellKnown(34090) or IsSpellKnown(34091) or IsSpellKnown(90265)) then
+	if IsFlyableArea() then
 		local _, _, _, _, _, _, _, instanceMapID = GetInstanceInfo()
 		local reqSpell = flyingSpell[instanceMapID]
-		if not reqSpell or IsSpellKnown(reqSpell) then
-			return true
+		if reqSpell then
+			return reqSpell > 0 and IsSpellKnown(reqSpell)
+		else
+			return IsSpellKnown(34090) or IsSpellKnown(34091) or IsSpellKnown(90265)
 		end
 	end
 end
