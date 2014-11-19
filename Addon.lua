@@ -57,7 +57,7 @@ end
 ------------------------------------------------------------------------
 
 local mountTypeInfo = {
-	[230] = {100,0,0},  -- * ground
+	[230] = {100,99,0},  -- * ground -- 99 flying to use in flying areas if the player doesn't have any flying mounts as favorites
 	[231] = {0,0,300},  -- Riding Turtle / Sea Turtle
 	[232] = {0,0,450},  -- Abyssal Seahorse, usable only in Vashj'ir
 	[241] = {101,0,0},  -- Qiraji Battle Tanks, usable only in AQ40
