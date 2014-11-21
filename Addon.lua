@@ -95,6 +95,9 @@ local flyingSpell = {
 	[870] = 115913, -- Pandaria = Wisdom of the Four Winds
 	[1116] = -1, -- Draenor
 	[1265] = -1, -- Tanaan Jungle Intro
+	[1153] = -1, -- FW Horde Garrison Level 3
+	[1158] = -1, -- SMV Alliance Garrison Level 1
+	[1159] = -1, -- SMV Alliance Garrison Level 3
 }
 
 local function CanFly() -- because IsFlyableArea is a fucking liar
