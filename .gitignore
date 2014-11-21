@@ -1,0 +1,12 @@
+# Miscellaneous ------------------------------------------------------------#
+
+*.bak
+*.ods
+.svn/
+Libs/
+
+# Windows garbage ----------------------------------------------------------#
+
+Desktop.ini
+ehthumbs.db
+Thumbs.db
