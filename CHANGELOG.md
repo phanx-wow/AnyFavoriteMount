@@ -1,3 +1,7 @@
+### Version 6.0.3.8
+
+* Garrisons: also not flyable.
+
 ### Version 6.0.3.7
 
 * No, Blizzard, Draenor is not flyable either.
