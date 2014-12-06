@@ -7,8 +7,7 @@
 	http://www.wowinterface.com/downloads/info23261-AnyFavoriteMount.html
 ----------------------------------------------------------------------]]
 
-AFM_Favorites = {}
-
+local _, ns = ...
 local isFake, playerFaction = {}
 
 local GetIsFavorite = C_MountJournal.GetIsFavorite -- replaced
@@ -16,6 +15,8 @@ local SetIsFavorite = C_MountJournal.SetIsFavorite -- replaced
 local GetMountInfo  = C_MountJournal.GetMountInfo  -- replaced
 local GetNumMounts  = C_MountJournal.GetNumMounts  -- simple upvalue for speed
 local Summon        = C_MountJournal.Summon        -- replaced
+
+AFM_Favorites = {}
 
 ------------------------------------------------------------------------
 
@@ -87,43 +88,13 @@ local flexMounts = { -- flying mounts that look OK on the ground
 	[163024] = true, -- Warforged Nightmare
 }
 
-local flyingSpell = {
-	[0]   = 90267,  -- Eastern Kingdoms = Flight Master's License
-	[1]   = 90267,  -- Kalimdor = Flight Master's License
-	[646] = 90267,  -- Deepholm = Flight Master's License
-	[571] = 54197,  -- Northrend = Cold Weather Flying
-	[870] = 115913, -- Pandaria = Wisdom of the Four Winds
-	[1116] = -1, -- Draenor
-	[1265] = -1, -- Tanaan Jungle Intro
-	[1152] = -1, -- FW Horde Garrison Level 1
-	[1330] = -1, -- FW Horde Garrison Level 2
-	[1153] = -1, -- FW Horde Garrison Level 3
-	[1154] = -1, -- FW Horde Garrison Level 4
-	[1158] = -1, -- SMV Alliance Garrison Level 1
-	[1331] = -1, -- SMV Alliance Garrison Level 2
-	[1159] = -1, -- SMV Alliance Garrison Level 3
-	[1160] = -1, -- SMV Alliance Garrison Level 4
-}
-
-local function CanFly() -- because IsFlyableArea is a fucking liar
-	if IsFlyableArea() then
-		local _, _, _, _, _, _, _, instanceMapID = GetInstanceInfo()
-		local reqSpell = flyingSpell[instanceMapID]
-		if reqSpell then
-			return reqSpell > 0 and IsSpellKnown(reqSpell)
-		else
-			return IsSpellKnown(34090) or IsSpellKnown(34091) or IsSpellKnown(90265)
-		end
-	end
-end
-
 local randoms = {}
 
 function C_MountJournal.Summon(index)
 	if index == 0 and not IsMounted() then
 		local bestSpeed = 0
-		local targetType = IsSubmerged() and 3 or CanFly() and 2 or 1
-		--print("Looking for:", IsSubmerged() and "SWIMMING" or CanFly() and "FLYING" or "GROUND")
+		local targetType = IsSubmerged() and 3 or ns.CanFly() and 2 or 1
+		--print("Looking for:", IsSubmerged() and "SWIMMING" or ns.CanFly() and "FLYING" or "GROUND")
 		for i = 1, GetNumMounts() do
 			local name, spellID, _, _, isUsable, _, isFavorite = C_MountJournal.GetMountInfo(i)
 			if isUsable and isFavorite then
