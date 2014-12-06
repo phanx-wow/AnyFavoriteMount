@@ -1,3 +1,7 @@
+### Version 6.0.3.9
+
+* Ashran: also not flyable, act II.
+
 ### Version 6.0.3.8
 
 * Garrisons: also not flyable.
