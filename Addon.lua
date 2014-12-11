@@ -103,7 +103,7 @@ function C_MountJournal.Summon(index)
 				if speed == 99 and flexMounts[spellID] then
 					speed = 100
 				end
-				--print("Checking:", name, "@", speed, "VS", bestSpeed)
+				--print("Checking:", name, mountType, "@", speed, "VS", bestSpeed)
 				if speed > bestSpeed then
 					bestSpeed = speed
 					wipe(randoms)
@@ -113,8 +113,9 @@ function C_MountJournal.Summon(index)
 				end
 			end
 		end
-		if bestSpeed > 0 then
-			index = randoms[random(#randoms)]
+		local numRandoms = #randoms
+		if numRandoms > 0 then
+			index = randoms[random(numRandoms)]
 		end
 	end
 	Summon(index)

@@ -1,3 +1,7 @@
+### Version 6.0.3.10
+
+* Fixed an issue causing special favorites to be excluded while swimming.
+
 ### Version 6.0.3.9
 
 * Ashran: also not flyable, act II.
