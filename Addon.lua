@@ -10,10 +10,10 @@
 local _, ns = ...
 local isFake, playerFaction = {}
 
+local GetNumMounts  = C_MountJournal.GetNumMounts  -- simple upvalue for speed
 local GetIsFavorite = C_MountJournal.GetIsFavorite -- replaced
 local SetIsFavorite = C_MountJournal.SetIsFavorite -- replaced
 local GetMountInfo  = C_MountJournal.GetMountInfo  -- replaced
-local GetNumMounts  = C_MountJournal.GetNumMounts  -- simple upvalue for speed
 local Summon        = C_MountJournal.Summon        -- replaced
 
 AFM_Favorites = {}
@@ -57,6 +57,8 @@ end
 
 ------------------------------------------------------------------------
 
+local GROUND, FLYING, SWIMMING = 1, 2, 3
+
 local mountTypeInfo = {
 	[230] = {100,99,0},  -- * ground -- 99 flying to use in flying areas if the player doesn't have any flying mounts as favorites
 	[231] = {0,0,300},  -- Riding Turtle / Sea Turtle
@@ -86,39 +88,54 @@ local flexMounts = { -- flying mounts that look OK on the ground
 	[134573] = true, -- Swift Windsteed
 	[107203] = true, -- Tyrael's Charger
 	[163024] = true, -- Warforged Nightmare
+	[98727]  = true, -- Winged Guardian - despite having wings it's OK!
 }
 
 local randoms = {}
 
-function C_MountJournal.Summon(index)
-	if index == 0 and not IsMounted() then
-		local bestSpeed = 0
-		local targetType = IsSubmerged() and 3 or ns.CanFly() and 2 or 1
-		--print("Looking for:", IsSubmerged() and "SWIMMING" or ns.CanFly() and "FLYING" or "GROUND")
-		for i = 1, GetNumMounts() do
-			local name, spellID, _, _, isUsable, _, isFavorite = C_MountJournal.GetMountInfo(i)
-			if isUsable and isFavorite then
-				local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtra(i)
-				local speed = mountTypeInfo[mountType][targetType]
-				if speed == 99 and flexMounts[spellID] then
-					speed = 100
-				end
-				--print("Checking:", name, mountType, "@", speed, "VS", bestSpeed)
+local function FillMountList(targetType)
+	--print("Looking for:", targetType == SWIMMING and "SWIMMING" or targetType == FLYING and "FLYING" or "GROUND")
+	wipe(randoms)
+	local bestSpeed = 0
+	for i = 1, GetNumMounts() do
+		local name, spellID, _, _, isUsable, _, isFavorite = C_MountJournal.GetMountInfo(i)
+		if isUsable and isFavorite then
+			local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtra(i)
+			local speed = mountTypeInfo[mountType][targetType]
+			if speed == 99 and flexMounts[spellID] then
+				speed = 100
+			end
+			--print("Checking:", name, mountType, "@", speed, "VS", bestSpeed)
+			if speed > 0 and speed >= bestSpeed then
 				if speed > bestSpeed then
 					bestSpeed = speed
 					wipe(randoms)
-					tinsert(randoms, i)
-				elseif speed == bestSpeed then
-					tinsert(randoms, i)
 				end
+				tinsert(randoms, i)
 			end
 		end
+	end
+	return randoms
+end
+
+function C_MountJournal.Summon(index)
+	if index == 0 and not IsMounted() then
+		local targetType = IsSubmerged() and SWIMMING or ns.CanFly() and FLYING or GROUND
+		FillMountList(targetType)
 		local numRandoms = #randoms
+		if numRandoms == 0 and targetType == SWIMMING then
+			-- Fall back to non-swimming mounts
+			targetType = ns.CanFly() and FLYING or GROUND
+			FillMountList(targetType)
+			numRandoms = #randoms
+		end
 		if numRandoms > 0 then
 			index = randoms[random(numRandoms)]
 		end
 	end
-	Summon(index)
+	if index > 0 then
+		Summon(index)
+	end
 end
 
 ------------------------------------------------------------------------
