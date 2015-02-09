@@ -1,7 +1,7 @@
 --[[--------------------------------------------------------------------
 	Any Favorite Mount
 	Set any mount as a favorite, even if the default UI doesn't approve.
-	Copyright (c) 2014 Phanx <addons@phanx.net>. All rights reserved.
+	Copyright (c) 2014-2015 Phanx <addons@phanx.net>. All rights reserved.
 	https://github.com/Phanx/AnyFavoriteMount
 	http://www.curse.com/addons/wow/anyfavoritemount
 	http://www.wowinterface.com/downloads/info23261-AnyFavoriteMount.html
