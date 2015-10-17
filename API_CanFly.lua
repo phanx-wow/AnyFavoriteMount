@@ -11,11 +11,11 @@ local _, ns = ...
 
 local flyingSpell = {
 	[0]    =  90267, -- Eastern Kingdoms = Flight Master's License
-	[1]    =  90267, -- Kalimdor = Flight Master's License
-	[646]  =  90267, -- Deepholm = Flight Master's License
+	[1]    =  90267, -- Kalimdor  = Flight Master's License
+	[646]  =  90267, -- Deepholm  = Flight Master's License
 	[571]  =  54197, -- Northrend = Cold Weather Flying
-	[870]  = 115913, -- Pandaria = Wisdom of the Four Winds
-	[1116] = -1, -- Draenor
+	[870]  = 115913, -- Pandaria  = Wisdom of the Four Winds
+	[1116] = 191645, -- Draenor   = Draenor Pathfinder
 	[1191] = -1, -- Ashran - World PvP
 	[1265] = -1, -- Tanaan Jungle Intro
 	[1152] = -1, -- FW Horde Garrison Level 1
