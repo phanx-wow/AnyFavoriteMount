@@ -10,6 +10,8 @@
 local _, ns = ...
 local isFake, playerFaction = {}
 
+local MACRO_NAME, MACRO_BODY = "Mount", "# Macro created by Any Favorite Mount\n/run C_MountJournal.Summon(0)"
+
 local GetNumMounts  = C_MountJournal.GetNumMounts  -- simple upvalue for speed
 local GetIsFavorite = C_MountJournal.GetIsFavorite -- replaced
 local SetIsFavorite = C_MountJournal.SetIsFavorite -- replaced
@@ -151,6 +153,41 @@ f:SetScript("OnEvent", function(f, event)
 		if isCollected and (not isFactionSpecific or faction == playerFaction) and AFM_Favorites[spellID] then
 			--print("Restoring favorite:", name, spellID, "=>", index)
 			isFake[index] = true
+		end
+	end
+
+	local function getMacroIndex()
+		local macroIndex = GetMacroIndexByName(MACRO_NAME)
+		if macroIndex == 0 and not InCombatLockdown() then
+			return CreateMacro(MACRO_NAME, "ACHIEVEMENT_GUILDPERK_MOUNTUP", MACRO_BODY)
+		end
+		return macroIndex
+	end
+
+	local CMJ_Pickup = C_MountJournal.Pickup
+	function C_MountJournal.Pickup(mountIndex)
+		if mountIndex == 0 then
+			return PickupMacro(getMacroIndex())
+		end
+		return CMJ_Pickup(mountIndex)
+	end
+
+	hooksecurefunc(GameTooltip, "SetAction", function(self, i)
+		local actionType, actionID = GetActionInfo(i)
+		if actionType == "macro" then
+			local macroName, _, macroBody = GetMacroInfo(actionID)
+			if macroName == MACRO_NAME and strtrim(macroBody) == MACRO_BODY then
+				self:SetMountBySpellID(150544)
+			end
+		end
+	end)
+
+	for i = 1, 120 do
+		local actionType, actionID = GetActionInfo(i)
+		if actionType == "summonmount" and not C_MountJournal.GetMountInfo(actionID) then
+			PickupMacro(getMacroIndex())
+			PlaceAction(i)
+			ClearCursor()
 		end
 	end
 end)

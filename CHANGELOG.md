@@ -1,3 +1,7 @@
+### Version 6.2.2.11
+
+* Fixed dragging and dropping the Summon Random Favorite Mount button from the mount journal to an action button. This now creates a macro named "Mount" that is compatible with Any Favorite Mount. You may edit the macro after it has been created. If you already have a macro named "Mount", that will be used instead of creating a new one.
+
 ### Version 6.0.3.10
 
 * Fixed an issue causing special favorites to be excluded while swimming.
