@@ -1,3 +1,8 @@
+### Version 6.2.2.12
+
+* Fixed flying in garrisons with Draenor Pathfinder.
+* Added support for the Chauffeured Chopper.
+
 ### Version 6.2.2.11
 
 * Fixed dragging and dropping the Summon Random Favorite Mount button from the mount journal to an action button. This now creates a macro named "Mount" that is compatible with Any Favorite Mount. You may edit the macro after it has been created. If you already have a macro named "Mount", that will be used instead of creating a new one.
