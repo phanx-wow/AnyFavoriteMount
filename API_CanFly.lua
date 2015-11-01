@@ -18,14 +18,14 @@ local flyingSpell = {
 	[1116] = 191645, -- Draenor   = Draenor Pathfinder
 	[1191] = -1, -- Ashran - World PvP
 	[1265] = -1, -- Tanaan Jungle Intro
-	[1152] = -1, -- FW Horde Garrison Level 1
-	[1330] = -1, -- FW Horde Garrison Level 2
-	[1153] = -1, -- FW Horde Garrison Level 3
-	[1154] = -1, -- FW Horde Garrison Level 4
-	[1158] = -1, -- SMV Alliance Garrison Level 1
-	[1331] = -1, -- SMV Alliance Garrison Level 2
-	[1159] = -1, -- SMV Alliance Garrison Level 3
-	[1160] = -1, -- SMV Alliance Garrison Level 4
+	[1152] = 191645, -- FW Horde Garrison Level 1
+	[1330] = 191645, -- FW Horde Garrison Level 2
+	[1153] = 191645, -- FW Horde Garrison Level 3
+	[1154] = 191645, -- FW Horde Garrison Level 4
+	[1158] = 191645, -- SMV Alliance Garrison Level 1
+	[1331] = 191645, -- SMV Alliance Garrison Level 2
+	[1159] = 191645, -- SMV Alliance Garrison Level 3
+	[1160] = 191645, -- SMV Alliance Garrison Level 4
 }
 
 local GetInstanceInfo, IsFlyableArea, IsSpellKnown = GetInstanceInfo, IsFlyableArea, IsSpellKnown
