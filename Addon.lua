@@ -70,6 +70,7 @@ local mountTypeInfo = {
 	[248] = {99,310,0}, -- * flying
 	[254] = {0,0,300},  -- Subdued Seahorse
 	[269] = {100,0,0},  -- Azure/Crimson Water Strider
+	[284] = {60,0,0},   -- Chauffeured Chopper
 }
 
 local flexMounts = { -- flying mounts that look OK on the ground
