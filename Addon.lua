@@ -1,60 +1,58 @@
 --[[--------------------------------------------------------------------
 	Any Favorite Mount
 	Set any mount as a favorite, even if the default UI doesn't approve.
-	Copyright (c) 2014-2015 Phanx <addons@phanx.net>. All rights reserved.
+	Copyright (c) 2014-2016 Phanx <addons@phanx.net>. All rights reserved.
 	https://github.com/Phanx/AnyFavoriteMount
 	http://www.curse.com/addons/wow/anyfavoritemount
 	http://www.wowinterface.com/downloads/info23261-AnyFavoriteMount.html
 ----------------------------------------------------------------------]]
 
 local _, ns = ...
-local isFake, playerFaction = {}
 
-local MACRO_NAME, MACRO_BODY = "Mount", "# Macro created by Any Favorite Mount\n/run C_MountJournal.Summon(0)"
+local isFake
+local MACRO_NAME, MACRO_BODY = "Mount", "# Macro created by Any Favorite Mount\n/run C_MountJournal.SummonByID(0)"
 
-local GetNumMounts  = C_MountJournal.GetNumMounts  -- simple upvalue for speed
-local GetIsFavorite = C_MountJournal.GetIsFavorite -- replaced
-local SetIsFavorite = C_MountJournal.SetIsFavorite -- replaced
-local GetMountInfo  = C_MountJournal.GetMountInfo  -- replaced
-local Summon        = C_MountJournal.Summon        -- replaced
+-- Upvalues for speed
+local GetMountIDs = C_MountJournal.GetMountIDs
+local GetMountInfoExtraByID = C_MountJournal.GetMountInfoExtraByID
+local GetNumDisplayedMounts = C_MountJournal.GetNumDisplayedMounts
 
-AFM_Favorites = {}
+-- Replaced functions
+local GetDisplayedMountInfo = C_MountJournal.GetDisplayedMountInfo
+local GetMountInfoByID = C_MountJournal.GetMountInfoByID
+local GetIsFavorite = C_MountJournal.GetIsFavorite
+local SetIsFavorite = C_MountJournal.SetIsFavorite
+local SummonByID = C_MountJournal.SummonByID
 
 ------------------------------------------------------------------------
 
 function C_MountJournal.GetIsFavorite(index)
-	local isFavorite, canFavorite = GetIsFavorite(index)
-	if not canFavorite then
-		--print("GetIsFavorite", (GetMountInfo(index)), index, isFake[index])
-		return not not isFake[index], true
-	end
-	return isFavorite, true
+	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetDisplayedMountInfo(index)
+	--print("GetIsFavorite", creatureName, index, isFavorite or isFake[spellID])
+	return isFavorite or isFake[spellID], true
 end
 
 function C_MountJournal.SetIsFavorite(index, value)
 	local isFavorite, canFavorite = GetIsFavorite(index)
-	if not canFavorite then
-		local name, spellID = GetMountInfo(index)
-		--print("SetIsFavorite", name, index, value)
-		AFM_Favorites[spellID] = value or nil
-		isFake[index] = value or nil -- remove instead of setting to false
-	else
-		SetIsFavorite(index, value)
+	if canFavorite then
+		--print("SetIsFavorite", "(default)", index, value)
+		return SetIsFavorite(index, value)
 	end
+	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetDisplayedMountInfo(index)
+	--print("SetIsFavorite", creatureName, index, value)
+	isFake[spellID] = value or nil
 end
 
-function C_MountJournal.GetMountInfo(index)
-	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected = GetMountInfo(index)
-	local isFavorite, canFavorite = GetIsFavorite(index)
-	if not canFavorite then
-		--print("GetMountInfo", creatureName, "favorite?", isFake[index])
-		isFavorite = not not isFake[index]
-	end
-	if (isFactionSpecific and faction ~= playerFaction) then
-		--print("GetMountInfo", creatureName, "wrong faction")
-		hideOnChar = true
-	end
-	return creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, hideOnChar, isCollected
+function C_MountJournal.GetDisplayedMountInfo(index)
+	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetDisplayedMountInfo(index)
+	--print("GetDisplayedMountInfo", creatureName, isFavorite or isFake[spellID])
+	return creatureName, spellID, icon, active, isUsable, sourceType, isFavorite or isFake[spellID], isFactionSpecific, faction, isFiltered, isCollected, mountID
+end
+
+function C_MountJournal.GetMountInfoByID(id)
+	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetMountInfoByID(id)
+	--print("GetMountInfoByID", creatureName, isFavorite or isFake[spellID])
+	return creatureName, spellID, icon, active, isUsable, sourceType, isFavorite or isFake[spellID], isFactionSpecific, faction, isFiltered, isCollected, mountID
 end
 
 ------------------------------------------------------------------------
@@ -62,36 +60,53 @@ end
 local GROUND, FLYING, SWIMMING = 1, 2, 3
 
 local mountTypeInfo = {
-	[230] = {100,99,0},  -- * ground -- 99 flying to use in flying areas if the player doesn't have any flying mounts as favorites
-	[231] = {0,0,300},  -- Riding Turtle / Sea Turtle
-	[232] = {0,0,450},  -- Abyssal Seahorse, usable only in Vashj'ir
-	[241] = {101,0,0},  -- Qiraji Battle Tanks, usable only in AQ40
+	[230] = {100,99,0}, -- * ground -- 99 flying to use in flying areas if the player doesn't have any flying mounts as favorites
+	[231] = {0,0,60},   -- Riding Turtle / Sea Turtle
+	[232] = {0,0,450},  -- Abyssal Seahorse -- only in Vashj'ir
+	[241] = {101,0,0},  -- Qiraji Battle Tanks -- only in Temple of Ahn'Qiraj
 	[247] = {99,310,0}, -- Red Flying Cloud
-	[248] = {99,310,0}, -- * flying
-	[254] = {0,0,300},  -- Subdued Seahorse
+	[248] = {99,310,0}, -- * flying -- 99 ground to deprioritize in non-flying zones if any non-flying mounts are favorites
+	[254] = {0,0,60},   -- Subdued Seahorse -- +300% swim speed in Vashj'ir, +60% swim speed elsewhere
 	[269] = {100,0,0},  -- Azure/Crimson Water Strider
 	[284] = {60,0,0},   -- Chauffeured Chopper
 }
 
 local flexMounts = { -- flying mounts that look OK on the ground
-	[75614]  = true, -- Celestial Steed
-	[136505] = true, -- Ghastly Charger
-	[163025] = true, -- Grinning Reaver
-	[48025]  = true, -- Headless Horseman's Mount
-	[142073] = true, -- Hearthsteed
-	[124659] = true, -- Imperial Quilen
-	[72286]  = true, -- Invincible
-	[121837] = true, -- Jade Panther
-	[120043] = true, -- Jeweled Onyx Panther
-	[121820] = true, -- Obsidian Panther
-	[121838] = true, -- Ruby Panther
-	[121836] = true, -- Sapphire Panther
-	[134359] = true, -- Sky Golem
-	[121839] = true, -- Sunstone Panther
-	[134573] = true, -- Swift Windsteed
-	[107203] = true, -- Tyrael's Charger
-	[163024] = true, -- Warforged Nightmare
-	[98727]  = true, -- Winged Guardian - despite having wings it's OK!
+	[376] = true, -- Celestial Steed
+	[532] = true, -- Ghastly Charger
+	[594] = true, -- Grinning Reaver
+	[219] = true, -- Headless Horseman's Mount
+	[547] = true, -- Hearthsteed
+	[468] = true, -- Imperial Quilen
+	[363] = true, -- Invincible
+	[457] = true, -- Jade Panther
+	[451] = true, -- Jeweled Onyx Panther
+	[455] = true, -- Obsidian Panther
+	[458] = true, -- Ruby Panther
+	[456] = true, -- Sapphire Panther
+	[522] = true, -- Sky Golem
+	[459] = true, -- Sunstone Panther
+	[523] = true, -- Swift Windsteed
+	[439] = true, -- Tyrael's Charger
+	[593] = true, -- Warforged Nightmare
+	[421] = true, -- Winged Guardian
+}
+
+local zoneMounts = { -- zone-specific mounts that don't need to be favorites
+	[312] = true, -- Sea Turtle
+	[420] = true, -- Subdued Seahorse
+	[373] = true, -- Vashj'ir Seahorse
+	[117] = true, -- Blue Qiraji Battle Tank
+	[120] = true, -- Green Qiraji Battle Tank
+	[118] = true, -- Red Qiraji Battle Tank
+	[119] = true, -- Yellow Qiraji Battle Tank
+}
+
+local isVashjir = {
+	[614] = true, -- Abyssal Depths
+	[610] = true, -- Kelp'thar Forest
+	[615] = true, -- Shimmering Expanse
+	[613] = true, -- Vashj'ir
 }
 
 local randoms = {}
@@ -99,30 +114,35 @@ local randoms = {}
 local function FillMountList(targetType)
 	--print("Looking for:", targetType == SWIMMING and "SWIMMING" or targetType == FLYING and "FLYING" or "GROUND")
 	wipe(randoms)
+
 	local bestSpeed = 0
-	for i = 1, GetNumMounts() do
-		local name, spellID, _, _, isUsable, _, isFavorite = C_MountJournal.GetMountInfo(i)
-		if isUsable and isFavorite then
-			local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtra(i)
+	local mounts = GetMountIDs() -- TODO: find out if this can change during gameplay; if not, just call it once at runtime
+	for i = 1, #mounts do
+		local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetMountInfoByID(mounts[i])
+		if isUsable and (isFavorite or isFake[spellID] or zoneMounts[mountID]) then
+			local creatureDisplayID, descriptionText, sourceText, isSelfMount, mountType = GetMountInfoExtraByID(mounts[i])
 			local speed = mountTypeInfo[mountType][targetType]
-			if speed == 99 and flexMounts[spellID] then
+			if speed == 99 and flexMounts[mountID] then -- some ground mounts
 				speed = 100
+			elseif mountType == 254 and isVashjir[GetCurrentMapAreaID()] then -- Subdued Seahorse is faster in Vashj'ir
+				speed = 300
 			end
-			--print("Checking:", name, mountType, "@", speed, "VS", bestSpeed)
+			--print("Checking:", creatureName, mountType, "@", speed, "VS", bestSpeed)
 			if speed > 0 and speed >= bestSpeed then
 				if speed > bestSpeed then
 					bestSpeed = speed
 					wipe(randoms)
 				end
-				tinsert(randoms, i)
+				tinsert(randoms, mountID)
 			end
 		end
 	end
+	--print("Found", #randoms, "possibilities")
 	return randoms
 end
 
-function C_MountJournal.Summon(index)
-	if index == 0 and not IsMounted() then
+function C_MountJournal.SummonByID(id)
+	if id == 0 and not IsMounted() then
 		local targetType = IsSubmerged() and SWIMMING or ns.CanFly() and FLYING or GROUND
 		FillMountList(targetType)
 		local numRandoms = #randoms
@@ -133,11 +153,11 @@ function C_MountJournal.Summon(index)
 			numRandoms = #randoms
 		end
 		if numRandoms > 0 then
-			index = randoms[random(numRandoms)]
+			id = randoms[random(numRandoms)]
 		end
 	end
-	if index > 0 then
-		Summon(index)
+	if id > 0 then
+		SummonByID(id)
 	end
 end
 
@@ -146,31 +166,31 @@ end
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function(f, event)
-	playerFaction = UnitFactionGroup("player")
-	playerFaction = playerFaction == "Horde" and 0 or playerFaction == "Alliance" and 1 or nil
-
-	for index = 1, GetNumMounts() do
-		local name, spellID, _, _, _, _, isFavorite, isFactionSpecific, faction, isHidden, isCollected = GetMountInfo(index)
-		if isCollected and (not isFactionSpecific or faction == playerFaction) and AFM_Favorites[spellID] then
-			--print("Restoring favorite:", name, spellID, "=>", index)
-			isFake[index] = true
-		end
-	end
+	AFM_Favorites = AFM_Favorites or {}
+	isFake = AFM_Favorites
 
 	local function getMacroIndex()
-		local macroIndex = GetMacroIndexByName(MACRO_NAME)
-		if macroIndex == 0 and not InCombatLockdown() then
+		local index = GetMacroIndexByName(MACRO_NAME)
+		if index == 0 and not InCombatLockdown() then
 			return CreateMacro(MACRO_NAME, "ACHIEVEMENT_GUILDPERK_MOUNTUP", MACRO_BODY)
 		end
-		return macroIndex
+		return index
+	end
+
+	local macroIndex = getMacroIndex()
+	if macroIndex then
+		local name, icon, body = GetMacroInfo(macroIndex)
+		if not body:find("SummonByID") then
+			EditMacro(macro, MACRO_NAME, "ACHIEVEMENT_GUILDPERK_MOUNTUP", MACRO_BODY)
+		end
 	end
 
 	local CMJ_Pickup = C_MountJournal.Pickup
-	function C_MountJournal.Pickup(mountIndex)
-		if mountIndex == 0 then
+	function C_MountJournal.Pickup(index)
+		if i == 0 then
 			return PickupMacro(getMacroIndex())
 		end
-		return CMJ_Pickup(mountIndex)
+		return CMJ_Pickup(index)
 	end
 
 	hooksecurefunc(GameTooltip, "SetAction", function(self, i)
@@ -185,7 +205,7 @@ f:SetScript("OnEvent", function(f, event)
 
 	for i = 1, 120 do
 		local actionType, actionID = GetActionInfo(i)
-		if actionType == "summonmount" and not C_MountJournal.GetMountInfo(actionID) then
+		if actionType == "summonmount" and not GetMountInfoByID(actionID) then
 			PickupMacro(getMacroIndex())
 			PlaceAction(i)
 			ClearCursor()
