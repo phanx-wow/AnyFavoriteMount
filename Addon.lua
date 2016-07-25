@@ -9,7 +9,9 @@
 
 local _, ns = ...
 
-local isFake
+AFM_Favorites = {}
+local isFake = AFM_Favorites
+
 local MACRO_NAME, MACRO_BODY = "Mount", "# Macro created by Any Favorite Mount\n/run C_MountJournal.SummonByID(0)"
 
 -- Upvalues for speed
@@ -166,7 +168,6 @@ end
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function(f, event)
-	AFM_Favorites = AFM_Favorites or {}
 	isFake = AFM_Favorites
 
 	local function getMacroIndex()
