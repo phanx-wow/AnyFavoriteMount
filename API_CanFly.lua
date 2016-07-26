@@ -11,24 +11,18 @@ local _, ns = ...
 
 local flyingSpell = {
 	[0]    =  90267, -- Eastern Kingdoms = Flight Master's License
-	[1]    =  90267, -- Kalimdor  = Flight Master's License
-	[646]  =  90267, -- Deepholm  = Flight Master's License
-	[571]  =  54197, -- Northrend = Cold Weather Flying
-	[870]  = 115913, -- Pandaria  = Wisdom of the Four Winds
-	[1116] = 191645, -- Draenor   = Draenor Pathfinder
+	[1]    =  90267, -- Kalimdor         = Flight Master's License
+	[646]  =  90267, -- Deepholm         = Flight Master's License
+	[571]  =  54197, -- Northrend        = Cold Weather Flying
+	[870]  = 115913, -- Pandaria         = Wisdom of the Four Winds
+	[1116] = 191645, -- Draenor          = Draenor Pathfinder
+	[1464] = 191645, -- Tanaan Jungle    = Draenor Pathfinder
 	[1191] = -1, -- Ashran - World PvP
 	[1265] = -1, -- Tanaan Jungle Intro
-	[1152] = 191645, -- FW Horde Garrison Level 1
-	[1330] = 191645, -- FW Horde Garrison Level 2
-	[1153] = 191645, -- FW Horde Garrison Level 3
-	[1154] = 191645, -- FW Horde Garrison Level 4
-	[1158] = 191645, -- SMV Alliance Garrison Level 1
-	[1331] = 191645, -- SMV Alliance Garrison Level 2
-	[1159] = 191645, -- SMV Alliance Garrison Level 3
-	[1160] = 191645, -- SMV Alliance Garrison Level 4
 }
 
 local GetInstanceInfo, IsFlyableArea, IsSpellKnown = GetInstanceInfo, IsFlyableArea, IsSpellKnown
+local IsOnGarrisonMap, IsOnShipyardMap = C_Garrison.IsOnGarrisonMap, C_Garrison.IsOnShipyardMap
 
 function ns.CanFly()
 	if IsFlyableArea() then
@@ -36,8 +30,9 @@ function ns.CanFly()
 		local reqSpell = flyingSpell[instanceMapID]
 		if reqSpell then
 			return reqSpell > 0 and IsSpellKnown(reqSpell)
-		else
+		elseif not IsOnGarrisonMap() and not IsOnShipyardMap() then
 			return IsSpellKnown(34090) or IsSpellKnown(34091) or IsSpellKnown(90265)
 		end
 	end
 end
+
