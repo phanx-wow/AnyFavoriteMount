@@ -12,7 +12,7 @@ local _, ns = ...
 AFM_Favorites = {}
 local isFake = AFM_Favorites
 
-local MACRO_NAME, MACRO_BODY = "Mount", "# Macro created by Any Favorite Mount\n/run C_MountJournal.SummonByID(0)"
+local MACRO_NAME, MACRO_BODY = "Mount", "# Macro created by Any Favorite Mount\n/click MountJournalSummonRandomFavoriteButton"
 
 -- Upvalues for speed
 local GetMountIDs = C_MountJournal.GetMountIDs
@@ -166,9 +166,19 @@ end
 ------------------------------------------------------------------------
 
 local f = CreateFrame("Frame")
+f:RegisterEvent("ADDON_LOADED")
 f:RegisterEvent("PLAYER_LOGIN")
-f:SetScript("OnEvent", function(f, event)
-	isFake = AFM_Favorites
+f:SetScript("OnEvent", function(self, event, arg)
+	if event == "ADDON_LOADED" then
+		if arg == "AnyFavoriteMount" then
+			self:UnregisterEvent(event)
+			isFake = AFM_Favorites
+		end
+	return end
+
+	if not MountJournalSummonRandomFavoriteButton then
+		CollectionsJournal_LoadUI()
+	end
 
 	local function getMacroIndex()
 		local index = GetMacroIndexByName(MACRO_NAME)
@@ -181,7 +191,7 @@ f:SetScript("OnEvent", function(f, event)
 	local macroIndex = getMacroIndex()
 	if macroIndex then
 		local name, icon, body = GetMacroInfo(macroIndex)
-		if not body:find("SummonByID") then
+		if not body:find("MountJournalSummonRandomFavoriteButton") then
 			EditMacro(macro, MACRO_NAME, "ACHIEVEMENT_GUILDPERK_MOUNTUP", MACRO_BODY)
 		end
 	end
