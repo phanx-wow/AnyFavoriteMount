@@ -12,7 +12,7 @@
 ## X-Copyright: Copyright (c) 2014-2016 Phanx. All rights reserved.
 ## X-Website: https://github.com/Phanx/AnyFavoriteMount
 
-## SavedVariablesPerCharacter: AFM_Favorites
+## SavedVariablesPerCharacter: AFM_FavoriteIDs, AFM_Favorites
 
 API_CanFly.lua
 Addon.lua

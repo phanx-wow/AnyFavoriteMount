@@ -9,52 +9,122 @@
 
 local _, ns = ...
 
-AFM_Favorites = {}
-local isFake = AFM_Favorites
+AFM_FavoriteIDs = {}
+local isFake = AFM_FavoriteIDs
 
 local MACRO_NAME, MACRO_BODY = "Mount", "# Macro created by Any Favorite Mount\n/click MountJournalSummonRandomFavoriteButton"
 
--- Upvalues for speed
-local GetMountIDs = C_MountJournal.GetMountIDs
-local GetMountInfoExtraByID = C_MountJournal.GetMountInfoExtraByID
+-- Replaced functions that take a display index
 local GetNumDisplayedMounts = C_MountJournal.GetNumDisplayedMounts
-
--- Replaced functions
 local GetDisplayedMountInfo = C_MountJournal.GetDisplayedMountInfo
-local GetMountInfoByID = C_MountJournal.GetMountInfoByID
+local GetDisplayedMountInfoExtra = C_MountJournal.GetDisplayedMountInfoExtra
 local GetIsFavorite = C_MountJournal.GetIsFavorite
 local SetIsFavorite = C_MountJournal.SetIsFavorite
+
+-- Replaced functions that take a mountID
+local GetMountInfoByID = C_MountJournal.GetMountInfoByID
 local SummonByID = C_MountJournal.SummonByID
 
 ------------------------------------------------------------------------
 
-function C_MountJournal.GetIsFavorite(index)
-	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetDisplayedMountInfo(index)
-	--print("GetIsFavorite", creatureName, index, isFavorite or isFake[spellID])
-	return isFavorite or isFake[spellID], true
+local GetRealIndex, GetRealMountID, UpdateDisplayedMountList
+do
+	local indexFromName = {}
+	local mountIDFromName = {}
+
+	local displayedMounts = {}
+	local sortOrder = {}
+	local FAVORITE_USABLE, FAVORITE, COLLECTED_USABLE, COLLECTED, NONE = 1, 2, 3, 4, 5
+
+	function GetRealIndex(index)
+		return indexFromName[displayedMounts[index]]
+	end
+
+	function GetRealMountID(index)
+		return mountIDFromName[displayedMounts[index]]
+	end
+
+	local function SortDisplayedMounts(a, b)
+		local aOrder = sortOrder[a]
+		local bOrder = sortOrder[b]
+		if aOrder == bOrder then
+			return a < b
+		else
+			return aOrder < bOrder
+		end
+	end
+
+	function UpdateDisplayedMountList()
+		wipe(displayedMounts)
+
+		for i = 1, GetNumDisplayedMounts() do
+			local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetDisplayedMountInfo(i)
+			tinsert(displayedMounts, creatureName)
+
+			indexFromName[creatureName] = i
+			mountIDFromName[creatureName] = mountID
+
+			isFavorite = isFavorite or isFake[mountID]
+
+			sortOrder[creatureName] = (isFavorite and isUsable) and FAVORITE_USABLE
+				or isFavorite and FAVORITE
+				--or (isCollected and isUsable) and COLLECTED_USABLE
+				or isCollected and COLLECTED
+				or NONE
+		end
+
+		sort(displayedMounts, SortDisplayedMounts)
+		return #displayedMounts
+	end
 end
 
-function C_MountJournal.SetIsFavorite(index, value)
-	local isFavorite, canFavorite = GetIsFavorite(index)
-	if canFavorite then
-		--print("SetIsFavorite", "(default)", index, value)
-		return SetIsFavorite(index, value)
-	end
-	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetDisplayedMountInfo(index)
-	--print("SetIsFavorite", creatureName, index, value)
-	isFake[spellID] = value or nil
+------------------------------------------------------------------------
+
+function C_MountJournal.GetNumDisplayedMounts()
+	local num = UpdateDisplayedMountList()
+	--print("GetNumDisplayedMounts", num)
+	return num
 end
 
 function C_MountJournal.GetDisplayedMountInfo(index)
-	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetDisplayedMountInfo(index)
-	--print("GetDisplayedMountInfo", creatureName, isFavorite or isFake[spellID])
-	return creatureName, spellID, icon, active, isUsable, sourceType, isFavorite or isFake[spellID], isFactionSpecific, faction, isFiltered, isCollected, mountID
+	local realMountID = GetRealMountID(index)
+	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = C_MountJournal.GetMountInfoByID(realMountID)
+	--print("GetDisplayedMountInfo", creatureName, isFavorite or isFake[mountID])
+	return creatureName, spellID, icon, active, isUsable, sourceType, isFavorite or isFake[mountID], isFactionSpecific, faction, isFiltered, isCollected, mountID
+end
+
+function C_MountJournal.GetDisplayedMountInfoExtra(index)
+	local realMountID = GetRealMountID(index)
+	return C_MountJournal.GetMountInfoExtraByID(realMountID)
 end
 
 function C_MountJournal.GetMountInfoByID(id)
 	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetMountInfoByID(id)
-	--print("GetMountInfoByID", creatureName, isFavorite or isFake[spellID])
-	return creatureName, spellID, icon, active, isUsable, sourceType, isFavorite or isFake[spellID], isFactionSpecific, faction, isFiltered, isCollected, mountID
+	--print("GetMountInfoByID", creatureName, isFavorite or isFake[mountID])
+	return creatureName, spellID, icon, active, isUsable, sourceType, isFavorite or isFake[mountID], isFactionSpecific, faction, isFiltered, isCollected, mountID
+end
+
+function C_MountJournal.GetIsFavorite(index)
+	local realMountID = GetRealMountID(index)
+	local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetMountInfoByID(realMountID)
+	--print("GetIsFavorite", GetMountInfoByID(realMountID), isFavorite, isFake[mountID])
+	return isFavorite or isFake[mountID], true
+end
+
+function C_MountJournal.SetIsFavorite(index, value)
+	local realIndex = GetRealIndex(index)
+	local realMountID = GetRealMountID(index)
+	local isFavorite, canFavorite = GetIsFavorite(realIndex)
+	if canFavorite then
+		--print("SetIsFavorite", "(real)", GetMountInfoByID(realMountID), value)
+		SetIsFavorite(realIndex, value)
+	else
+		--print("SetIsFavorite", "(fake)", GetMountInfoByID(realMountID), value)
+		isFake[realMountID] = value or nil
+		if MountJournal and MountJournal:IsVisible() then
+			MountJournal_UpdateMountList()
+		end
+	end
 end
 
 ------------------------------------------------------------------------
@@ -118,11 +188,11 @@ local function FillMountList(targetType)
 	wipe(randoms)
 
 	local bestSpeed = 0
-	local mounts = GetMountIDs() -- TODO: find out if this can change during gameplay; if not, just call it once at runtime
+	local mounts = C_MountJournal.GetMountIDs() -- TODO: find out if this can change during gameplay; if not, just call it once at runtime
 	for i = 1, #mounts do
 		local creatureName, spellID, icon, active, isUsable, sourceType, isFavorite, isFactionSpecific, faction, isFiltered, isCollected, mountID = GetMountInfoByID(mounts[i])
-		if isUsable and (isFavorite or isFake[spellID] or zoneMounts[mountID]) then
-			local creatureDisplayID, descriptionText, sourceText, isSelfMount, mountType = GetMountInfoExtraByID(mounts[i])
+		if isUsable and (isFavorite or isFake[mountID] or zoneMounts[mountID]) then
+			local creatureDisplayID, descriptionText, sourceText, isSelfMount, mountType = C_MountJournal.GetMountInfoExtraByID(mounts[i])
 			local speed = mountTypeInfo[mountType][targetType]
 			if speed == 99 and flexMounts[mountID] then -- some ground mounts
 				speed = 100
@@ -174,54 +244,75 @@ f:SetScript("OnEvent", function(self, event, arg)
 	if event == "ADDON_LOADED" then
 		if arg == "AnyFavoriteMount" then
 			self:UnregisterEvent(event)
-			isFake = AFM_Favorites
+			isFake = AFM_FavoriteIDs
+			-- Upgrade from old spellID-based list to new mountID-based list
+			if AFM_Favorites then
+				local mountIDs = C_MountJournal.GetMountIDs()
+				for _, mountID in pairs(mountIDs) do
+					local creatureName, spellID = GetMountInfoByID(mountID)
+					if AFM_Favorites[spellID] then
+						isFake[mountID] = true
+					end
+				end
+			end
 		end
 	return end
 
-	if not MountJournalSummonRandomFavoriteButton then
-		CollectionsJournal_LoadUI()
-	end
-
-	local function getMacroIndex()
-		local index = GetMacroIndexByName(MACRO_NAME)
-		if index == 0 and not InCombatLockdown() then
-			return CreateMacro(MACRO_NAME, "ACHIEVEMENT_GUILDPERK_MOUNTUP", MACRO_BODY)
+	if event == "PLAYER_LOGIN" then
+		if not MountJournalSummonRandomFavoriteButton then
+			CollectionsJournal_LoadUI()
 		end
-		return index
+
+		function self:GetMacroIndex(create)
+			local macro = GetMacroIndexByName(MACRO_NAME)
+			if macro == 0 and create and not InCombatLockdown() then
+				macro = CreateMacro(MACRO_NAME, "ACHIEVEMENT_GUILDPERK_MOUNTUP", MACRO_BODY)
+			end
+			return macro or 0
+		end
+
+		hooksecurefunc(GameTooltip, "SetAction", function(self, i)
+			local actionType, actionID = GetActionInfo(i)
+			if actionType == "macro" then
+				local macroName, _, macroBody = GetMacroInfo(actionID)
+				if macroName == MACRO_NAME and strtrim(macroBody) == MACRO_BODY then
+					self:SetMountBySpellID(150544)
+				end
+			end
+		end)
+
+		local PickupMount = C_MountJournal.Pickup
+		function C_MountJournal.Pickup(i)
+			if i == 0 then
+				return PickupMacro(self:GetMacroIndex(true))
+			end
+			return PickupMount(i)
+		end
 	end
 
-	local macroIndex = getMacroIndex()
-	if macroIndex then
-		local name, icon, body = GetMacroInfo(macroIndex)
+	if InCombatLockdown() then
+		return self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	end
+
+	self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+
+	local macro = self:GetMacroIndex()
+	if macro > 0 then
+		local name, icon, body = GetMacroInfo(macro)
 		if not body:find("MountJournalSummonRandomFavoriteButton") then
 			EditMacro(macro, MACRO_NAME, "ACHIEVEMENT_GUILDPERK_MOUNTUP", MACRO_BODY)
 		end
 	end
 
-	local CMJ_Pickup = C_MountJournal.Pickup
-	function C_MountJournal.Pickup(index)
-		if i == 0 then
-			return PickupMacro(getMacroIndex())
-		end
-		return CMJ_Pickup(index)
-	end
-
-	hooksecurefunc(GameTooltip, "SetAction", function(self, i)
-		local actionType, actionID = GetActionInfo(i)
-		if actionType == "macro" then
-			local macroName, _, macroBody = GetMacroInfo(actionID)
-			if macroName == MACRO_NAME and strtrim(macroBody) == MACRO_BODY then
-				self:SetMountBySpellID(150544)
-			end
-		end
-	end)
-
-	for i = 1, 120 do
-		local actionType, actionID = GetActionInfo(i)
+	for action = 1, 120 do
+		local actionType, actionID = GetActionInfo(action)
 		if actionType == "summonmount" and not GetMountInfoByID(actionID) then
-			PickupMacro(getMacroIndex())
-			PlaceAction(i)
-			ClearCursor()
+			local macro = self:GetMacroIndex(true)
+			if macro > 0 then
+				PickupMacro(macro)
+				PlaceAction(action)
+				ClearCursor()
+			end
 		end
 	end
 end)
