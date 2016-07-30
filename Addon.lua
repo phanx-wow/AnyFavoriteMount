@@ -69,7 +69,7 @@ local mountTypeInfo = {
 	[247] = {99,310,0}, -- Red Flying Cloud
 	[248] = {99,310,0}, -- * flying -- 99 ground to deprioritize in non-flying zones if any non-flying mounts are favorites
 	[254] = {0,0,60},   -- Subdued Seahorse -- +300% swim speed in Vashj'ir, +60% swim speed elsewhere
-	[269] = {100,0,0},  -- Azure/Crimson Water Strider
+	[269] = {100,0,0},  -- Water Striders
 	[284] = {60,0,0},   -- Chauffeured Chopper
 }
 
@@ -128,6 +128,8 @@ local function FillMountList(targetType)
 				speed = 100
 			elseif mountType == 254 and isVashjir[GetCurrentMapAreaID()] then -- Subdued Seahorse is faster in Vashj'ir
 				speed = 300
+			elseif mountType == 264 then -- Water Strider, prioritize in water, deprioritize on land
+				speed = IsSwimming() and 101 or 99
 			end
 			--print("Checking:", creatureName, mountType, "@", speed, "VS", bestSpeed)
 			if speed > 0 and speed >= bestSpeed then
