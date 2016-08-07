@@ -216,7 +216,10 @@ local function FillMountList(targetType)
 end
 
 function C_MountJournal.SummonByID(id)
-	if id == 0 and not IsMounted() then
+	if id == 0 then
+		if IsMounted() then
+			return Dismount()
+		end
 		local targetType = IsSubmerged() and SWIMMING or ns.CanFly() and FLYING or GROUND
 		FillMountList(targetType)
 		local numRandoms = #randoms

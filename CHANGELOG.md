@@ -1,3 +1,8 @@
+### Version 7.0.3.2
+
+* Flying mounts will now be used in your garrison if you have Draenor Pathfinder.
+* Using the "Summon Random Favorite Mount" action while already mounted will now dismount you (same as the default UI).
+
 ### Version 7.0.3.1
 
 * Fixed an error that could occur at login with other mount-related addons.
