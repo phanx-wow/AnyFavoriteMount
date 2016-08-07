@@ -30,9 +30,10 @@ function ns.CanFly()
 		local reqSpell = flyingSpell[instanceMapID]
 		if reqSpell then
 			return reqSpell > 0 and IsSpellKnown(reqSpell)
-		elseif not IsOnGarrisonMap() and not IsOnShipyardMap() then
+		elseif IsOnGarrisonMap() and not IsOnShipyardMap() then
+			return IsSpellKnown(191645) -- Draenor Pathfinder
+		else
 			return IsSpellKnown(34090) or IsSpellKnown(34091) or IsSpellKnown(90265)
 		end
 	end
 end
-
