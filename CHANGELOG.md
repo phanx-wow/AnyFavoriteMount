@@ -1,5 +1,7 @@
 ### Version 7.0.3.2
 
+* Fixed sorting in the mount journal.
+* Water Striders will now be prioritized over ground mounts while swimming in non-flyable areas.
 * Flying mounts will now be used in your garrison if you have Draenor Pathfinder.
 * Using the "Summon Random Favorite Mount" action while already mounted will now dismount you (same as the default UI).
 
