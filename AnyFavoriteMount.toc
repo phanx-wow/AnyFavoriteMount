@@ -11,6 +11,8 @@
 ## X-Email: addons@phanx.net
 ## X-Copyright: Copyright (c) 2014-2016 Phanx. All rights reserved.
 ## X-Website: https://github.com/Phanx/AnyFavoriteMount
+## X-Curse-ProjectID: anyfavoritemount
+## X-WoWI-ID: 23261
 
 ## SavedVariablesPerCharacter: AFM_FavoriteIDs
 
